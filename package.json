@@ -55,6 +55,7 @@
     "@commitlint/config-conventional": "^17.0.2",
     "@react-native-community/eslint-config": "^3.0.2",
     "@release-it/conventional-changelog": "^5.0.0",
+    "@types/color": "^3.0.3",
     "@types/jest": "^28.1.2",
     "@types/react": "~17.0.21",
     "@types/react-native": "0.68.0",
@@ -76,7 +77,8 @@
   },
   "peerDependencies": {
     "react": "*",
-    "react-native": "*"
+    "react-native": "*",
+    "react-native-paper": "^4.12.5"
   },
   "jest": {
     "preset": "react-native",
@@ -150,5 +152,8 @@
         }
       ]
     ]
+  },
+  "dependencies": {
+    "color": "^4.2.3"
   }
 }
