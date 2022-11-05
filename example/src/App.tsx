@@ -1,31 +1,24 @@
 import * as React from 'react';
+import { SafeAreaView, StyleSheet } from 'react-native';
+import { Provider } from 'react-native-paper';
+import { SnackbarProvider } from 'react-native-paper-snackbar-stack';
 
-import { StyleSheet, View, Text } from 'react-native';
-import { multiply } from 'react-native-paper-snackbar-stack';
+import SnackForm from './SnackForm';
 
 export default function App() {
-  const [result, setResult] = React.useState<number | undefined>();
-
-  React.useEffect(() => {
-    multiply(3, 7).then(setResult);
-  }, []);
-
   return (
-    <View style={styles.container}>
-      <Text>Result: {result}</Text>
-    </View>
+    <Provider>
+      <SnackbarProvider>
+        <SafeAreaView style={styles.root}>
+          <SnackForm />
+        </SafeAreaView>
+      </SnackbarProvider>
+    </Provider>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  root: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  box: {
-    width: 60,
-    height: 60,
-    marginVertical: 20,
   },
 });
