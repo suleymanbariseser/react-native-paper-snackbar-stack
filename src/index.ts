@@ -4,6 +4,9 @@ export type {
   ProviderContext,
   SnackbarType,
   SnackbarVariant,
+  SnackbarHorizontalPosition,
+  SnackbarTransition,
+  SnackbarVerticalPosition,
 } from './SnackbarContext';
 export { default as SnackbarContext } from './SnackbarContext';
 

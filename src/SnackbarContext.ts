@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import type { SnackbarProps } from 'react-native-paper';
+import type { SnackbarProps as PaperSnackbarProps } from 'react-native-paper';
 
 export type SnackbarVariant =
   | 'default'
@@ -8,13 +8,19 @@ export type SnackbarVariant =
   | 'warning'
   | 'info';
 
-export type Transition = 'slide' | 'grow' | 'fade' | 'zoom';
+export type SnackbarTransition = 'slide' | 'grow' | 'fade' | 'zoom';
+
+export type SnackbarVerticalPosition = 'bottom' | 'top';
+
+export type SnackbarHorizontalPosition = 'left' | 'center' | 'right';
 
 export type SnackbarType = {
-  message: SnackbarProps['children'];
+  message: PaperSnackbarProps['children'];
   key: string;
   variant?: SnackbarVariant;
-} & Pick<SnackbarProps, 'action' | 'duration'>;
+  vertical?: SnackbarVerticalPosition;
+  horizontal?: SnackbarHorizontalPosition;
+} & Pick<PaperSnackbarProps, 'action' | 'duration'>;
 
 export interface ProviderContext {
   enqueueSnackbar: (options: Omit<SnackbarType, 'key'>) => string;
