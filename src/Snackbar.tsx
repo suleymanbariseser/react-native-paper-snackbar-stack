@@ -3,6 +3,7 @@ import { Snackbar as PaperSnackbar } from 'react-native-paper';
 import * as React from 'react';
 import type { SnackbarVariant } from './SnackbarContext';
 import { Dimensions, StyleSheet } from 'react-native';
+import useEventCallback from 'use-event-callback';
 
 export const COLORS: Record<SnackbarVariant, string> = {
   default: '#313131',
@@ -44,30 +45,43 @@ const Snackbar: React.FC<SnackbarProps> = ({
     updateIsMobile(screenWidth);
   }, []);
 
-  React.useEffect(() => {
+  const handleClose = useEventCallback(() => {
+    onDismiss?.();
+    setVisible(false);
+  });
+
+  const setAutoHideTimer = useEventCallback((autoHideDurationParam) => {
     const isInfinity =
       duration === Number.POSITIVE_INFINITY ||
       duration === Number.NEGATIVE_INFINITY;
 
-    if (!isInfinity && !timerRef.current) {
-      timerRef.current = setTimeout(() => {
-        onDismiss?.();
-        setVisible(false);
-      }, duration);
+    if (!onDismiss || autoHideDurationParam == null || isInfinity) {
+      return;
+    }
+
+    clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => {
+      handleClose();
+    }, autoHideDurationParam);
+  });
+
+  React.useEffect(() => {
+    if (visible) {
+      setAutoHideTimer(duration);
     }
 
     return () => {
-      if (timerRef.current) {
-        clearTimeout(timerRef.current);
-      }
+      clearTimeout(timerRef.current);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [duration]);
+  }, [visible, duration, setAutoHideTimer]);
 
   return (
     <PaperSnackbar
       {...props}
-      onDismiss={onDismiss}
+      onDismiss={handleClose}
+      /**
+       * disable paper snackbar. It resets the timer whenever onDismiss change
+       */
       duration={Number.POSITIVE_INFINITY}
       wrapperStyle={wrapperStyle}
       style={{ backgroundColor }}

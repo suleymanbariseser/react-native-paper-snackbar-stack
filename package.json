@@ -156,5 +156,7 @@
       ]
     ]
   },
-  "dependencies": {}
+  "dependencies": {
+    "use-event-callback": "^0.1.0"
+  }
 }
