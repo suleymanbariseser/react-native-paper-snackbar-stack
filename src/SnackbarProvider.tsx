@@ -129,7 +129,6 @@ const SnackbarProvider: React.FC<SnackbarProviderProps> = ({
           >
             {groupSnacks.map(({ message, duration, key, action, variant }) => (
               <Snackbar
-                visible
                 variant={variant}
                 onDismiss={closeSnackbar.bind(this, key)}
                 key={key}

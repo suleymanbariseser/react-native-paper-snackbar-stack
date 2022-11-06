@@ -14,14 +14,18 @@ export const COLORS: Record<SnackbarVariant, string> = {
 
 export type SnackbarProps = {
   variant?: SnackbarVariant;
-} & Omit<PaperSnackbarProps, 'theme'>;
+} & Omit<PaperSnackbarProps, 'theme' | 'visible'>;
 
 const Snackbar: React.FC<SnackbarProps> = ({
   variant = 'default',
   children,
+  duration = Number.POSITIVE_INFINITY,
+  onDismiss,
   ...props
 }) => {
+  const [visible, setVisible] = React.useState(true);
   const [isMobile, setIsMobile] = React.useState(true);
+  const timerRef = React.useRef<NodeJS.Timeout>();
 
   const backgroundColor = COLORS[variant];
 
@@ -40,11 +44,34 @@ const Snackbar: React.FC<SnackbarProps> = ({
     updateIsMobile(screenWidth);
   }, []);
 
+  React.useEffect(() => {
+    const isInfinity =
+      duration === Number.POSITIVE_INFINITY ||
+      duration === Number.NEGATIVE_INFINITY;
+
+    if (!isInfinity && !timerRef.current) {
+      timerRef.current = setTimeout(() => {
+        onDismiss?.();
+        setVisible(false);
+      }, duration);
+    }
+
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [duration]);
+
   return (
     <PaperSnackbar
       {...props}
+      onDismiss={onDismiss}
+      duration={Number.POSITIVE_INFINITY}
       wrapperStyle={wrapperStyle}
       style={{ backgroundColor }}
+      visible={visible}
     >
       {children}
     </PaperSnackbar>
