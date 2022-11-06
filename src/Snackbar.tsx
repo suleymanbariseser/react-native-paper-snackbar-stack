@@ -1,9 +1,8 @@
 import type { SnackbarProps as PaperSnackbarProps } from 'react-native-paper';
-import { Snackbar as PaperSnackbar, Text } from 'react-native-paper';
+import { Snackbar as PaperSnackbar } from 'react-native-paper';
 import * as React from 'react';
 import type { SnackbarVariant } from './SnackbarContext';
 import { Dimensions, StyleSheet } from 'react-native';
-import color from 'color';
 
 export const COLORS: Record<SnackbarVariant, string> = {
   default: '#313131',
@@ -26,8 +25,6 @@ const Snackbar: React.FC<SnackbarProps> = ({
 
   const backgroundColor = COLORS[variant];
 
-  const textColor = color(backgroundColor).isLight() ? 'black' : 'white';
-
   const wrapperStyle = [styles.snackbar, !isMobile && { maxWidth: 450 }];
 
   React.useEffect(() => {
@@ -49,7 +46,7 @@ const Snackbar: React.FC<SnackbarProps> = ({
       wrapperStyle={wrapperStyle}
       style={{ backgroundColor }}
     >
-      <Text style={{ color: textColor }}>{children}</Text>
+      {children}
     </PaperSnackbar>
   );
 };
