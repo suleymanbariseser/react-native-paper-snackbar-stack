@@ -72,7 +72,7 @@ To use example app in expo go, scan the qr code in the mobile device.
 
 <p align="center">
   <img alt="react-native-paper" src="docs/assets/expo-go.svg" height="300">
-  <a href="https://gifyu.com/image/SE4Vq"><img src="https://s4.gifyu.com/images/ipad_demo.gif" alt="ipad_demo.gif" border="0" height="300" /></a>
+  <img alt="ipad_demo.gif" src="docs/assets/ipad_demo.gif" height="300" />
 </p>
 
 ## Contributing
