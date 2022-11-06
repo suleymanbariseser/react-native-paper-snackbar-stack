@@ -10,6 +10,7 @@ import SnackbarContainer from './SnackbarContainer';
 
 type CombinedPosition =
   `${SnackbarVerticalPosition}-${SnackbarHorizontalPosition}`;
+
 export interface SnackbarProviderProps {
   children?: React.ReactNode;
   maxSnack?: number;

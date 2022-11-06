@@ -1,9 +1,17 @@
 import type { SnackbarProps as PaperSnackbarProps } from 'react-native-paper';
-import { Snackbar as PaperSnackbar, useTheme, Text } from 'react-native-paper';
+import { Snackbar as PaperSnackbar, Text } from 'react-native-paper';
 import * as React from 'react';
 import type { SnackbarVariant } from './SnackbarContext';
 import { Dimensions, StyleSheet } from 'react-native';
 import color from 'color';
+
+export const COLORS: Record<SnackbarVariant, string> = {
+  default: '#313131',
+  error: '#d32f2f',
+  info: '#2196f3',
+  success: '#43a047',
+  warning: '#ff9800',
+};
 
 export type SnackbarProps = {
   variant?: SnackbarVariant;
@@ -15,16 +23,8 @@ const Snackbar: React.FC<SnackbarProps> = ({
   ...props
 }) => {
   const [isMobile, setIsMobile] = React.useState(true);
-  const theme = useTheme();
-  const colors: Record<SnackbarVariant, string> = {
-    default: theme.colors.text,
-    error: theme.colors.error,
-    info: theme.colors.primary,
-    success: theme.colors.accent,
-    warning: '#ff9966',
-  };
 
-  const backgroundColor = colors[variant];
+  const backgroundColor = COLORS[variant];
 
   const textColor = color(backgroundColor).isLight() ? 'black' : 'white';
 
