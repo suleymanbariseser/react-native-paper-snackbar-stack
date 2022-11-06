@@ -13,19 +13,37 @@ type CombinedPosition =
 
 export interface SnackbarProviderProps {
   children?: React.ReactNode;
+
+  /**
+   * The maximum number of the snackbars at a moment.
+   * @default 1
+   */
   maxSnack?: number;
+
+  /**
+   * Default vertical position of snackbars
+   * @default "bottom"
+   */
   vertical?: SnackbarVerticalPosition;
+
+  /**
+   * Default horizontal position of snackbars
+   * @default "center"
+   */
   horizontal?: SnackbarHorizontalPosition;
 }
 
 const SnackbarProvider: React.FC<SnackbarProviderProps> = ({
   children,
-  maxSnack = 2,
+  maxSnack = 1,
   vertical: defaultVertical = 'bottom',
   horizontal: defaultHorizontal = 'center',
 }) => {
   const [snacks, setSnacks] = React.useState<SnackbarType[]>([]);
 
+  /**
+   * adds a new snackbar in stack
+   */
   const enqueueSnackbar: ProviderContext['enqueueSnackbar'] = React.useCallback(
     (options) => {
       const uniqueId = new Date().valueOf() + '' + Math.random() * 100;
@@ -44,6 +62,9 @@ const SnackbarProvider: React.FC<SnackbarProviderProps> = ({
     [defaultVertical, defaultHorizontal, snacks]
   );
 
+  /**
+   * closes a snackbar with the given key
+   */
   const closeSnackbar: ProviderContext['closeSnackbar'] = React.useCallback(
     (key) => {
       if (typeof key !== 'string' || key === '')
@@ -68,6 +89,9 @@ const SnackbarProvider: React.FC<SnackbarProviderProps> = ({
     }
   }, [snacks, maxSnack, closeSnackbar]);
 
+  /**
+   * Group snackbars with their vertical and horizontal positions
+   */
   const groupedSnacks = React.useMemo(() => {
     const newGroups: Partial<Record<CombinedPosition, SnackbarType[]>> = {};
 
