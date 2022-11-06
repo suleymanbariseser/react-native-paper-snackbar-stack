@@ -70,8 +70,7 @@ export default function SnackbarTest() {
 
 To use example app in expo go, scan the qr code in the mobile device.
 
-  <img alt="react-native-paper" src="docs/assets/expo-go.svg" height="300">
-  <img alt="react-native-paper" src="https://s4.gifyu.com/images/ipad_demo.md.gif" height="300">
+<img alt="react-native-paper" src="docs/assets/expo-go.svg" width="300">
 
 ## Contributing
 
