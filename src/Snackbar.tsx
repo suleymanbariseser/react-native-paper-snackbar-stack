@@ -1,9 +1,15 @@
 import type { SnackbarProps as PaperSnackbarProps } from 'react-native-paper';
 import { Snackbar as PaperSnackbar } from 'react-native-paper';
 import * as React from 'react';
-import type { SnackbarVariant } from './SnackbarContext';
-import { Dimensions, StyleSheet } from 'react-native';
+import type {
+  SnackbarHorizontalPosition,
+  SnackbarTransition,
+  SnackbarVariant,
+  SnackbarVerticalPosition,
+} from './SnackbarContext';
+import { Animated, Dimensions, StyleSheet } from 'react-native';
 import useEventCallback from 'use-event-callback';
+import { getTransitionAnimation } from './utils';
 
 export const COLORS: Record<SnackbarVariant, string> = {
   default: '#313131',
@@ -15,15 +21,26 @@ export const COLORS: Record<SnackbarVariant, string> = {
 
 export type SnackbarProps = {
   variant?: SnackbarVariant;
+  transition?: SnackbarTransition;
+
+  /**
+   * vertical position of the snackbar. It will be used for animation direction
+   */
+  vertical?: SnackbarVerticalPosition;
+  horizontal?: SnackbarHorizontalPosition;
 } & Omit<PaperSnackbarProps, 'theme' | 'visible'>;
 
 const Snackbar: React.FC<SnackbarProps> = ({
   variant = 'default',
   children,
   duration = Number.POSITIVE_INFINITY,
+  transition = 'slide',
+  vertical = 'bottom',
+  horizontal = 'center',
   onDismiss,
   ...props
 }) => {
+  const fadeAnim = React.useRef(new Animated.Value(0)).current;
   const [visible, setVisible] = React.useState(true);
   const [isMobile, setIsMobile] = React.useState(true);
   const timerRef = React.useRef<NodeJS.Timeout>();
@@ -46,8 +63,13 @@ const Snackbar: React.FC<SnackbarProps> = ({
   }, []);
 
   const handleClose = useEventCallback(() => {
-    onDismiss?.();
-    setVisible(false);
+    Animated.timing(fadeAnim, {
+      toValue: 0,
+      useNativeDriver: true,
+    }).start(() => {
+      onDismiss?.();
+      setVisible(false);
+    });
   });
 
   const setAutoHideTimer = useEventCallback((autoHideDurationParam) => {
@@ -75,6 +97,20 @@ const Snackbar: React.FC<SnackbarProps> = ({
     };
   }, [visible, duration, setAutoHideTimer]);
 
+  React.useEffect(() => {
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      useNativeDriver: true,
+    }).start();
+  }, [fadeAnim]);
+
+  const transitionStyle = getTransitionAnimation(
+    transition,
+    fadeAnim,
+    vertical,
+    horizontal
+  );
+
   return (
     <PaperSnackbar
       {...props}
@@ -84,7 +120,12 @@ const Snackbar: React.FC<SnackbarProps> = ({
        */
       duration={Number.POSITIVE_INFINITY}
       wrapperStyle={wrapperStyle}
-      style={{ backgroundColor }}
+      style={[
+        {
+          backgroundColor,
+        },
+        transitionStyle,
+      ]}
       visible={visible}
     >
       {children}

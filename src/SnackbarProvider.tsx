@@ -127,17 +127,22 @@ const SnackbarProvider: React.FC<SnackbarProviderProps> = ({
             vertical={vertical}
             horizontal={horizontal}
           >
-            {groupSnacks.map(({ message, duration, key, action, variant }) => (
-              <Snackbar
-                variant={variant}
-                onDismiss={closeSnackbar.bind(this, key)}
-                key={key}
-                action={action}
-                duration={duration}
-              >
-                {message}
-              </Snackbar>
-            ))}
+            {groupSnacks.map(
+              ({ message, duration, key, action, variant, transition }) => (
+                <Snackbar
+                  key={`${groupKey}-${key}`}
+                  variant={variant}
+                  onDismiss={closeSnackbar.bind(this, key)}
+                  action={action}
+                  duration={duration}
+                  vertical={vertical}
+                  horizontal={horizontal}
+                  transition={transition}
+                >
+                  {message}
+                </Snackbar>
+              )
+            )}
           </SnackbarContainer>
         );
       })}

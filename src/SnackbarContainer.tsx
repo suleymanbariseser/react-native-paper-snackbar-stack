@@ -4,7 +4,7 @@ import type {
   SnackbarHorizontalPosition,
   SnackbarVerticalPosition,
 } from './SnackbarContext';
-import { getHorizontalStyle, getVerticalStyle } from './utils';
+import { getContainerStyle } from './utils';
 
 export interface SnackbarContainerProps {
   children?: React.ReactNode;
@@ -16,10 +16,7 @@ const SnackbarContainer: React.FC<SnackbarContainerProps> = ({
   vertical = 'bottom',
   horizontal = 'center',
 }) => {
-  const rootStyles: ViewStyle = {
-    alignItems: getHorizontalStyle(horizontal),
-    justifyContent: getVerticalStyle(vertical),
-  };
+  const rootStyles: ViewStyle = getContainerStyle(vertical, horizontal);
 
   return (
     <View pointerEvents="box-none" style={[styles.root, rootStyles]}>
@@ -33,9 +30,7 @@ export default SnackbarContainer;
 const styles = StyleSheet.create({
   root: {
     position: 'absolute',
-    top: 0,
     left: 0,
     width: '100%',
-    height: '100%',
   },
 });

@@ -17,6 +17,7 @@ export type SnackbarHorizontalPosition = 'left' | 'center' | 'right';
 export type SnackbarType = {
   message: PaperSnackbarProps['children'];
   key: string;
+  transition?: SnackbarTransition;
   variant?: SnackbarVariant;
   vertical?: SnackbarVerticalPosition;
   horizontal?: SnackbarHorizontalPosition;
