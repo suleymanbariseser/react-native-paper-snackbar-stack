@@ -76,7 +76,7 @@ export const getSlideAnimation = (
 
   const translate = anim.interpolate<number>({
     inputRange: [0, 1],
-    outputRange: [(transformValue * transformSign) / 2, 0],
+    outputRange: [transformValue * transformSign, 0],
   });
 
   return {
@@ -84,6 +84,21 @@ export const getSlideAnimation = (
       // @ts-ignore
       {
         [field]: translate,
+      },
+    ],
+  };
+};
+
+export const getZoomAnimation = (anim: Animated.Value): AnimatedViewStyles => {
+  const scale = anim.interpolate<number>({
+    inputRange: [0, 1],
+    outputRange: [0, 1],
+  });
+
+  return {
+    transform: [
+      {
+        scale,
       },
     ],
   };
@@ -99,6 +114,10 @@ export const getTransitionAnimation = (
 
   if (transition === 'slide') {
     return getSlideAnimation(anim, vertical, horizontal);
+  }
+
+  if (transition === 'zoom') {
+    return getZoomAnimation(anim);
   }
 
   return {};
