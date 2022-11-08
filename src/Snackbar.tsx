@@ -34,7 +34,7 @@ const Snackbar: React.FC<SnackbarProps> = ({
   variant = 'default',
   children,
   duration = Number.POSITIVE_INFINITY,
-  transition = 'zoom',
+  transition = 'fade',
   vertical = 'bottom',
   horizontal = 'center',
   onDismiss,

@@ -104,6 +104,17 @@ export const getZoomAnimation = (anim: Animated.Value): AnimatedViewStyles => {
   };
 };
 
+export const getFadeAnimation = (anim: Animated.Value): AnimatedViewStyles => {
+  const opacity = anim.interpolate<number>({
+    inputRange: [0, 1],
+    outputRange: [0, 1],
+  });
+
+  return {
+    opacity,
+  };
+};
+
 export const getTransitionAnimation = (
   transition: SnackbarTransition | undefined,
   anim: Animated.Value,
@@ -118,6 +129,10 @@ export const getTransitionAnimation = (
 
   if (transition === 'zoom') {
     return getZoomAnimation(anim);
+  }
+
+  if (transition === 'fade') {
+    return getFadeAnimation(anim);
   }
 
   return {};
