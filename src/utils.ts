@@ -5,6 +5,7 @@ import {
   TransformsStyle,
   ViewStyle,
 } from 'react-native';
+import { DEFAULTS } from './constants';
 import type {
   SnackbarHorizontalPosition,
   SnackbarTransition,
@@ -14,23 +15,23 @@ import type {
 export const getHorizontalStyle = (
   horizontal: SnackbarHorizontalPosition
 ): ViewStyle['alignItems'] => {
-  if (horizontal === 'center') {
-    return 'center';
+  if (horizontal === 'left') {
+    return 'flex-start';
   }
 
   if (horizontal === 'right') return 'flex-end';
 
-  return 'flex-start';
+  return 'center';
 };
 
 export const getVerticalStyle = (
   vertical: SnackbarVerticalPosition
 ): ViewStyle['justifyContent'] => {
-  if (vertical === 'bottom') {
-    return 'flex-end';
+  if (vertical === 'top') {
+    return 'flex-start';
   }
 
-  return 'flex-start';
+  return 'flex-end';
 };
 
 export const getContainerStyle = (
@@ -59,8 +60,8 @@ export type AnimatedTransform = Animated.AnimatedProps<TransformsStyle>;
 
 export const getSlideAnimation = (
   anim: Animated.Value,
-  vertical: SnackbarVerticalPosition = 'bottom',
-  horizontal: SnackbarHorizontalPosition = 'center'
+  vertical: SnackbarVerticalPosition = DEFAULTS.vertical,
+  horizontal: SnackbarHorizontalPosition = DEFAULTS.horizontal
 ): AnimatedViewStyles => {
   const windowSize = Dimensions.get('window');
 
@@ -118,22 +119,16 @@ export const getFadeAnimation = (anim: Animated.Value): AnimatedViewStyles => {
 export const getTransitionAnimation = (
   transition: SnackbarTransition | undefined,
   anim: Animated.Value,
-  vertical: SnackbarVerticalPosition = 'bottom',
-  horizontal: SnackbarHorizontalPosition = 'center'
+  vertical: SnackbarVerticalPosition = DEFAULTS.vertical,
+  horizontal: SnackbarHorizontalPosition = DEFAULTS.horizontal
 ): AnimatedViewStyles => {
-  if (!transition) return {};
-
-  if (transition === 'slide') {
-    return getSlideAnimation(anim, vertical, horizontal);
+  switch (transition) {
+    case 'slide':
+      return getSlideAnimation(anim, vertical, horizontal);
+    case 'zoom':
+      return getZoomAnimation(anim);
+    case 'fade':
+    default:
+      return getFadeAnimation(anim);
   }
-
-  if (transition === 'zoom') {
-    return getZoomAnimation(anim);
-  }
-
-  if (transition === 'fade') {
-    return getFadeAnimation(anim);
-  }
-
-  return {};
 };

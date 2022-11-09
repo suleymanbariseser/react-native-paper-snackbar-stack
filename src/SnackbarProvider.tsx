@@ -7,6 +7,7 @@ import SnackbarContext, {
 } from './SnackbarContext';
 import Snackbar from './Snackbar';
 import SnackbarContainer from './SnackbarContainer';
+import { DEFAULTS } from './constants';
 
 type CombinedPosition =
   `${SnackbarVerticalPosition}-${SnackbarHorizontalPosition}`;
@@ -36,8 +37,8 @@ export interface SnackbarProviderProps {
 const SnackbarProvider: React.FC<SnackbarProviderProps> = ({
   children,
   maxSnack = 1,
-  vertical: defaultVertical = 'bottom',
-  horizontal: defaultHorizontal = 'center',
+  vertical: defaultVertical = DEFAULTS.vertical,
+  horizontal: defaultHorizontal = DEFAULTS.horizontal,
 }) => {
   const [snacks, setSnacks] = React.useState<SnackbarType[]>([]);
 

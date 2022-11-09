@@ -10,6 +10,7 @@ import type {
 import { Animated, Dimensions, StyleSheet } from 'react-native';
 import useEventCallback from 'use-event-callback';
 import { getTransitionAnimation } from './utils';
+import { DEFAULTS } from './constants';
 
 export const COLORS: Record<SnackbarVariant, string> = {
   default: '#313131',
@@ -31,12 +32,12 @@ export type SnackbarProps = {
 } & Omit<PaperSnackbarProps, 'theme' | 'visible'>;
 
 const Snackbar: React.FC<SnackbarProps> = ({
-  variant = 'default',
+  variant = DEFAULTS.variant,
   children,
   duration = Number.POSITIVE_INFINITY,
-  transition = 'fade',
-  vertical = 'bottom',
-  horizontal = 'center',
+  transition = DEFAULTS.transition,
+  vertical = DEFAULTS.vertical,
+  horizontal = DEFAULTS.horizontal,
   onDismiss,
   ...props
 }) => {
