@@ -5,7 +5,7 @@ import SnackbarContext, {
   SnackbarType,
   SnackbarVerticalPosition,
 } from './SnackbarContext';
-import Snackbar from './Snackbar';
+import Snackbar, { SnackbarRefType } from './Snackbar';
 import SnackbarContainer from './SnackbarContainer';
 import { DEFAULTS } from './constants';
 
@@ -40,7 +40,11 @@ const SnackbarProvider: React.FC<SnackbarProviderProps> = ({
   vertical: defaultVertical = DEFAULTS.vertical,
   horizontal: defaultHorizontal = DEFAULTS.horizontal,
 }) => {
+  if (maxSnack < 1) throw new Error('maxSnack must be greater than 0');
   const [snacks, setSnacks] = React.useState<SnackbarType[]>([]);
+
+  const snackbarRefs = React.useRef<Record<string, SnackbarRefType>>({});
+  const snackQueue = React.useRef<SnackbarType[]>([]);
 
   /**
    * adds a new snackbar in stack
@@ -56,11 +60,20 @@ const SnackbarProvider: React.FC<SnackbarProviderProps> = ({
         key: uniqueId,
       };
 
-      setSnacks([...snacks, snack]);
+      // if snacks array has more item then maxSnack then store snack in the queue
+      if (snacks.length >= maxSnack || snackQueue.current.length > 0) {
+        snackQueue.current.push(snack);
+        const oldestSnack = snacks[0];
+        if (oldestSnack) {
+          snackbarRefs.current[oldestSnack.key]?.close();
+        }
+      } else {
+        setSnacks([...snacks, snack]);
+      }
 
       return uniqueId;
     },
-    [defaultVertical, defaultHorizontal, snacks]
+    [defaultVertical, defaultHorizontal, snacks, maxSnack, snackQueue]
   );
 
   /**
@@ -71,24 +84,22 @@ const SnackbarProvider: React.FC<SnackbarProviderProps> = ({
       if (typeof key !== 'string' || key === '')
         throw new Error('No key is provided');
 
-      const snackIndex = snacks.findIndex((sn: any) => sn.key === key);
-
-      if (snackIndex >= 0) {
-        const newSnacks = [...snacks];
+      // remove snack from the queue
+      const newSnacks = [...snacks];
+      const snackIndex = newSnacks.findIndex((snack) => snack.key === key);
+      if (snackIndex > -1) {
         newSnacks.splice(snackIndex, 1);
-        setSnacks(newSnacks);
       }
-    },
-    [snacks]
-  );
 
-  // if number of snacks exceed max snacks then remove first snack
-  const handleSnacks = React.useCallback(() => {
-    const firstSnack = snacks[0];
-    if (snacks.length > maxSnack && firstSnack) {
-      closeSnackbar(firstSnack.key);
-    }
-  }, [snacks, maxSnack, closeSnackbar]);
+      if (snackQueue.current.length > 0 && newSnacks.length < maxSnack) {
+        const snack = snackQueue.current.shift();
+        newSnacks.push(snack!);
+      }
+
+      setSnacks(newSnacks);
+    },
+    [snacks, maxSnack]
+  );
 
   /**
    * Group snackbars with their vertical and horizontal positions
@@ -111,8 +122,6 @@ const SnackbarProvider: React.FC<SnackbarProviderProps> = ({
     return newGroups;
   }, [snacks]);
 
-  React.useEffect(() => handleSnacks(), [handleSnacks]);
-
   return (
     <SnackbarContext.Provider value={{ enqueueSnackbar, closeSnackbar }}>
       {children}
@@ -131,6 +140,9 @@ const SnackbarProvider: React.FC<SnackbarProviderProps> = ({
             {groupSnacks.map(
               ({ message, duration, key, action, variant, transition }) => (
                 <Snackbar
+                  ref={(el) => {
+                    snackbarRefs.current[key] = el!;
+                  }}
                   key={`${groupKey}-${key}`}
                   variant={variant}
                   onDismiss={closeSnackbar.bind(this, key)}

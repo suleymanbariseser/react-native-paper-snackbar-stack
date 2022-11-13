@@ -20,6 +20,10 @@ export const COLORS: Record<SnackbarVariant, string> = {
   warning: '#ff9800',
 };
 
+export type SnackbarRefType = {
+  close: (cb?: Animated.EndCallback) => void;
+};
+
 export type SnackbarProps = {
   variant?: SnackbarVariant;
   transition?: SnackbarTransition;
@@ -31,108 +35,118 @@ export type SnackbarProps = {
   horizontal?: SnackbarHorizontalPosition;
 } & Omit<PaperSnackbarProps, 'theme' | 'visible'>;
 
-const Snackbar: React.FC<SnackbarProps> = ({
-  variant = DEFAULTS.variant,
-  children,
-  duration = Number.POSITIVE_INFINITY,
-  transition = DEFAULTS.transition,
-  vertical = DEFAULTS.vertical,
-  horizontal = DEFAULTS.horizontal,
-  onDismiss,
-  ...props
-}) => {
-  const fadeAnim = React.useRef(new Animated.Value(0)).current;
-  const [visible, setVisible] = React.useState(true);
-  const [isMobile, setIsMobile] = React.useState(true);
-  const timerRef = React.useRef<NodeJS.Timeout>();
+const Snackbar = React.forwardRef<SnackbarRefType, SnackbarProps>(
+  (
+    {
+      variant = DEFAULTS.variant,
+      children,
+      duration = Number.POSITIVE_INFINITY,
+      transition = DEFAULTS.transition,
+      vertical = DEFAULTS.vertical,
+      horizontal = DEFAULTS.horizontal,
+      onDismiss,
+      ...props
+    },
+    ref
+  ) => {
+    const fadeAnim = React.useRef(new Animated.Value(0)).current;
+    const [visible, setVisible] = React.useState(true);
+    const [isMobile, setIsMobile] = React.useState(true);
+    const timerRef = React.useRef<NodeJS.Timeout>();
 
-  const backgroundColor = COLORS[variant];
+    const backgroundColor = COLORS[variant];
 
-  const wrapperStyle = [styles.snackbar, !isMobile && { maxWidth: 450 }];
+    const wrapperStyle = [styles.snackbar, !isMobile && { maxWidth: 450 }];
 
-  React.useEffect(() => {
-    const updateIsMobile = (width: number) => {
-      setIsMobile(width < 600);
-    };
+    React.useEffect(() => {
+      const updateIsMobile = (width: number) => {
+        setIsMobile(width < 600);
+      };
 
-    Dimensions.addEventListener('change', ({ screen }) =>
-      updateIsMobile(screen.width)
+      Dimensions.addEventListener('change', ({ screen }) =>
+        updateIsMobile(screen.width)
+      );
+
+      const { width: screenWidth } = Dimensions.get('screen');
+      updateIsMobile(screenWidth);
+    }, []);
+
+    const handleClose: SnackbarRefType['close'] = useEventCallback((cb) => {
+      Animated.timing(fadeAnim, {
+        toValue: 0,
+        useNativeDriver: true,
+      }).start((animationProps) => {
+        cb?.(animationProps);
+        onDismiss?.();
+        setVisible(false);
+      });
+    });
+
+    const setAutoHideTimer = useEventCallback((autoHideDurationParam) => {
+      const isInfinity =
+        duration === Number.POSITIVE_INFINITY ||
+        duration === Number.NEGATIVE_INFINITY;
+
+      if (!onDismiss || autoHideDurationParam == null || isInfinity) {
+        return;
+      }
+
+      clearTimeout(timerRef.current);
+      timerRef.current = setTimeout(() => {
+        handleClose();
+      }, autoHideDurationParam);
+    });
+
+    React.useEffect(() => {
+      if (visible) {
+        setAutoHideTimer(duration);
+      }
+
+      return () => {
+        clearTimeout(timerRef.current);
+      };
+    }, [visible, duration, setAutoHideTimer]);
+
+    React.useEffect(() => {
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        useNativeDriver: true,
+      }).start();
+    }, [fadeAnim]);
+
+    React.useImperativeHandle(ref, () => ({
+      close: handleClose,
+    }));
+
+    const transitionStyle = getTransitionAnimation(
+      transition,
+      fadeAnim,
+      vertical,
+      horizontal
     );
 
-    const { width: screenWidth } = Dimensions.get('screen');
-    updateIsMobile(screenWidth);
-  }, []);
-
-  const handleClose = useEventCallback(() => {
-    Animated.timing(fadeAnim, {
-      toValue: 0,
-      useNativeDriver: true,
-    }).start(() => {
-      onDismiss?.();
-      setVisible(false);
-    });
-  });
-
-  const setAutoHideTimer = useEventCallback((autoHideDurationParam) => {
-    const isInfinity =
-      duration === Number.POSITIVE_INFINITY ||
-      duration === Number.NEGATIVE_INFINITY;
-
-    if (!onDismiss || autoHideDurationParam == null || isInfinity) {
-      return;
-    }
-
-    clearTimeout(timerRef.current);
-    timerRef.current = setTimeout(() => {
-      handleClose();
-    }, autoHideDurationParam);
-  });
-
-  React.useEffect(() => {
-    if (visible) {
-      setAutoHideTimer(duration);
-    }
-
-    return () => {
-      clearTimeout(timerRef.current);
-    };
-  }, [visible, duration, setAutoHideTimer]);
-
-  React.useEffect(() => {
-    Animated.timing(fadeAnim, {
-      toValue: 1,
-      useNativeDriver: true,
-    }).start();
-  }, [fadeAnim]);
-
-  const transitionStyle = getTransitionAnimation(
-    transition,
-    fadeAnim,
-    vertical,
-    horizontal
-  );
-
-  return (
-    <PaperSnackbar
-      {...props}
-      onDismiss={handleClose}
-      /**
-       * disable paper snackbar. It resets the timer whenever onDismiss change
-       */
-      duration={Number.POSITIVE_INFINITY}
-      wrapperStyle={wrapperStyle}
-      style={[
-        {
-          backgroundColor,
-        },
-        transitionStyle,
-      ]}
-      visible={visible}
-    >
-      {children}
-    </PaperSnackbar>
-  );
-};
+    return (
+      <PaperSnackbar
+        {...props}
+        onDismiss={handleClose}
+        /**
+         * disable paper snackbar. It resets the timer whenever onDismiss change
+         */
+        duration={Number.POSITIVE_INFINITY}
+        wrapperStyle={wrapperStyle}
+        style={[
+          {
+            backgroundColor,
+          },
+          transitionStyle,
+        ]}
+        visible={visible}
+      >
+        {children}
+      </PaperSnackbar>
+    );
+  }
+);
 
 export default Snackbar;
 
