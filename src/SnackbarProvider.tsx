@@ -4,6 +4,7 @@ import SnackbarContext, {
   ProviderContext,
   SnackbarType,
   SnackbarVerticalPosition,
+  SnackbarTransition,
 } from './SnackbarContext';
 import Snackbar, { SnackbarRefType } from './Snackbar';
 import SnackbarContainer from './SnackbarContainer';
@@ -32,6 +33,12 @@ export interface SnackbarProviderProps {
    * @default "center"
    */
   horizontal?: SnackbarHorizontalPosition;
+
+  /**
+   * Default transition affect when snackbar open/close
+   * @default "fade"
+   */
+  transition?: SnackbarTransition;
 }
 
 const SnackbarProvider: React.FC<SnackbarProviderProps> = ({
@@ -39,6 +46,7 @@ const SnackbarProvider: React.FC<SnackbarProviderProps> = ({
   maxSnack = 1,
   vertical: defaultVertical = DEFAULTS.vertical,
   horizontal: defaultHorizontal = DEFAULTS.horizontal,
+  transition: defaultTransition = DEFAULTS.transition,
 }) => {
   if (maxSnack < 1) throw new Error('maxSnack must be greater than 0');
   const [snacks, setSnacks] = React.useState<SnackbarType[]>([]);
@@ -56,6 +64,7 @@ const SnackbarProvider: React.FC<SnackbarProviderProps> = ({
       const snack: SnackbarType = {
         vertical: defaultVertical,
         horizontal: defaultHorizontal,
+        transition: defaultTransition,
         ...options,
         key: uniqueId,
       };
@@ -73,7 +82,14 @@ const SnackbarProvider: React.FC<SnackbarProviderProps> = ({
 
       return uniqueId;
     },
-    [defaultVertical, defaultHorizontal, snacks, maxSnack, snackQueue]
+    [
+      defaultVertical,
+      defaultHorizontal,
+      snacks,
+      maxSnack,
+      snackQueue,
+      defaultTransition,
+    ]
   );
 
   /**

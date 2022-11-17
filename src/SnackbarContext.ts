@@ -8,7 +8,7 @@ export type SnackbarVariant =
   | 'warning'
   | 'info';
 
-export type SnackbarTransition = 'slide' | 'grow' | 'fade' | 'zoom';
+export type SnackbarTransition = 'slide' | 'fade' | 'zoom';
 
 export type SnackbarVerticalPosition = 'bottom' | 'top';
 
