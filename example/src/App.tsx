@@ -15,6 +15,7 @@ export default function App() {
     maxSnack: 1,
     vertical: 'top',
     horizontal: 'center',
+    transition: 'fade',
   });
 
   return (
@@ -23,6 +24,7 @@ export default function App() {
         maxSnack={globalOptions.maxSnack}
         vertical={globalOptions.vertical}
         horizontal={globalOptions.horizontal}
+        transition={globalOptions.transition}
       >
         <SafeAreaView style={styles.root}>
           <SnackForm

@@ -17,6 +17,7 @@ import {
   SnackbarVariant,
   useSnackbar,
   SnackbarVerticalPosition,
+  SnackbarTransition,
 } from 'react-native-paper-snackbar-stack';
 
 interface SectionProps {
@@ -81,6 +82,8 @@ const horizontalOptions: SnackbarHorizontalPosition[] = [
   'center',
 ];
 
+const transitionOptions: SnackbarTransition[] = ['fade', 'slide', 'zoom'];
+
 export interface SnackFormProps {
   globalOptions: Omit<SnackbarProviderProps, 'children'>;
   onGlobalOptionsChange: (
@@ -100,6 +103,8 @@ const SnackForm: React.FC<SnackFormProps> = ({
     React.useState<SnackbarVerticalPosition>('top');
   const [horizontalPosition, setHorizontalPosition] =
     React.useState<SnackbarHorizontalPosition>('left');
+  const [transition, setTransition] =
+    React.useState<SnackbarTransition>('fade');
 
   const handleShowSnackbar = () => {
     enqueueSnackbar({
@@ -108,6 +113,7 @@ const SnackForm: React.FC<SnackFormProps> = ({
       variant,
       vertical: verticalPosition,
       horizontal: horizontalPosition,
+      transition,
     });
   };
 
@@ -184,6 +190,24 @@ const SnackForm: React.FC<SnackFormProps> = ({
             ))}
           </RadioButton.Group>
         </SectionItem>
+        <SectionItem title="Transition" value={globalOptions.transition}>
+          <RadioButton.Group
+            onValueChange={(value) =>
+              onGlobalOptionsChange({
+                ...globalOptions,
+                transition: value as SnackbarTransition,
+              })
+            }
+            value={globalOptions.transition!}
+          >
+            {transitionOptions.map((option) => (
+              <View key={option} style={styles.radio}>
+                <RadioButton value={option} />
+                <Text>{option}</Text>
+              </View>
+            ))}
+          </RadioButton.Group>
+        </SectionItem>
       </Section>
       <Section
         title="Snackbar Options"
@@ -251,6 +275,22 @@ const SnackForm: React.FC<SnackFormProps> = ({
             value={horizontalPosition}
           >
             {horizontalOptions.map((option) => (
+              <View key={option} style={styles.radio}>
+                <RadioButton value={option} />
+                <Text>{option}</Text>
+              </View>
+            ))}
+          </RadioButton.Group>
+        </SectionItem>
+
+        <SectionItem title="Transition" value={transition}>
+          <RadioButton.Group
+            onValueChange={(value) =>
+              setTransition(value as SnackbarTransition)
+            }
+            value={transition}
+          >
+            {transitionOptions.map((option) => (
               <View key={option} style={styles.radio}>
                 <RadioButton value={option} />
                 <Text>{option}</Text>
