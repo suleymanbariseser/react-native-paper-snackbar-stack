@@ -66,6 +66,86 @@ export default function SnackbarTest() {
 }
 ```
 
+## SnackbarProvider Props
+
+- `children`
+
+  The part that can access all functionalities of the package.
+
+  Type: `React.ReactNode`
+
+- `maxSnack`
+
+  Maximum number of displayed snackbars at a time.
+
+  Type: `number`
+
+  Default: `1`
+
+- and [`Common Props`](#commonProps)
+
+## enqueueSnackbar Options
+
+- `message`
+
+  The string that is displayed in the snackbar
+
+  Type: `string`
+
+- `duration`
+
+  The number of milliseconds to close snackbar automatically
+
+  Type: `number`
+
+- `action`
+
+  The action button that will be shown on the right of the message. It will close the snackbar on pressed.
+
+  Type: [`SnackbarProps['action']`](https://callstack.github.io/react-native-paper/snackbar.html#action)
+
+- and [`Common Props`](#commonProps)
+
+## closeSnackbar Options
+
+- `key`
+
+  The unique identifier for a snackbar. It is returned from `enqueueSnackbar` call.
+
+## <p id="commonProps">Common Props</p>
+
+- `variant`
+
+  Prestyled snackbar variants
+
+  Type: `'default' | 'success' | 'error' | 'warning'`
+
+  Default: `'default'`
+
+- `vertical`
+
+  Vertical position of the snackbar.
+
+  Type: `'bottom' | 'top'`
+
+  Default: `'bottom'`
+
+- `horizontal`
+
+  Horizontal position of the snackbar.
+
+  Type: `'left' | 'center' | 'right'`
+
+  Default: `'center'`
+
+- `transition`
+
+  transition effect when snackbar opens/closes
+
+  Type: `'fade' | 'slide' | 'zoom'`
+
+  Default: `'fade'`
+
 ## Example App
 
 To use example app in expo go, scan the qr code in the mobile device.
