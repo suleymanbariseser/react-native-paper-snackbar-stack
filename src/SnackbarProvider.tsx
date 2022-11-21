@@ -6,7 +6,7 @@ import SnackbarContext, {
   SnackbarVerticalPosition,
   SnackbarTransition,
 } from './SnackbarContext';
-import Snackbar, { SnackbarRefType } from './Snackbar';
+import Snackbar, { SnackbarProps, SnackbarRefType } from './Snackbar';
 import SnackbarContainer from './SnackbarContainer';
 import { DEFAULTS } from './constants';
 
@@ -39,6 +39,16 @@ export interface SnackbarProviderProps {
    * @default "fade"
    */
   transition?: SnackbarTransition;
+
+  /**
+   * custom style for snackbar container
+   */
+  style?: SnackbarProps['style'];
+
+  /**
+   * custom style for snackbar wrapper
+   */
+  wrapperStyle?: SnackbarProps['wrapperStyle'];
 }
 
 const SnackbarProvider: React.FC<SnackbarProviderProps> = ({
@@ -47,6 +57,8 @@ const SnackbarProvider: React.FC<SnackbarProviderProps> = ({
   vertical: defaultVertical = DEFAULTS.vertical,
   horizontal: defaultHorizontal = DEFAULTS.horizontal,
   transition: defaultTransition = DEFAULTS.transition,
+  style,
+  wrapperStyle,
 }) => {
   if (maxSnack < 1) throw new Error('maxSnack must be greater than 0');
   const [snacks, setSnacks] = React.useState<SnackbarType[]>([]);
@@ -167,6 +179,8 @@ const SnackbarProvider: React.FC<SnackbarProviderProps> = ({
                   vertical={vertical}
                   horizontal={horizontal}
                   transition={transition}
+                  style={style}
+                  wrapperStyle={wrapperStyle}
                 >
                   {message}
                 </Snackbar>

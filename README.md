@@ -82,6 +82,18 @@ export default function SnackbarTest() {
 
   Default: `1`
 
+- `style`
+
+  custom style for snackbar container
+
+  Type: [`ViewStyle`](https://reactnative.dev/docs/view-style-props)
+
+- `wrapperStyle`
+
+  custom style for snackbar wrapper
+
+  Type: [`ViewStyle`](https://reactnative.dev/docs/view-style-props)
+
 - and [`Common Props`](#commonProps)
 
 ## enqueueSnackbar Options

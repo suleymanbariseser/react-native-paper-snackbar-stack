@@ -45,6 +45,8 @@ const Snackbar = React.forwardRef<SnackbarRefType, SnackbarProps>(
       vertical = DEFAULTS.vertical,
       horizontal = DEFAULTS.horizontal,
       onDismiss,
+      wrapperStyle: newWrapperStyle,
+      style: newStyle,
       ...props
     },
     ref
@@ -55,8 +57,6 @@ const Snackbar = React.forwardRef<SnackbarRefType, SnackbarProps>(
     const timerRef = React.useRef<NodeJS.Timeout>();
 
     const backgroundColor = COLORS[variant];
-
-    const wrapperStyle = [styles.snackbar, !isMobile && { maxWidth: 450 }];
 
     React.useEffect(() => {
       const updateIsMobile = (width: number) => {
@@ -125,6 +125,21 @@ const Snackbar = React.forwardRef<SnackbarRefType, SnackbarProps>(
       horizontal
     );
 
+    const wrapperStyle = [
+      styles.wrapper,
+      !isMobile && { maxWidth: 450 },
+      newWrapperStyle,
+    ];
+
+    const style = [
+      styles.snackbar,
+      {
+        backgroundColor,
+      },
+      transitionStyle,
+      newStyle,
+    ];
+
     return (
       <PaperSnackbar
         {...props}
@@ -134,12 +149,7 @@ const Snackbar = React.forwardRef<SnackbarRefType, SnackbarProps>(
          */
         duration={Number.POSITIVE_INFINITY}
         wrapperStyle={wrapperStyle}
-        style={[
-          {
-            backgroundColor,
-          },
-          transitionStyle,
-        ]}
+        style={style}
         visible={visible}
       >
         {children}
@@ -152,6 +162,9 @@ export default Snackbar;
 
 const styles = StyleSheet.create({
   snackbar: {
+    position: 'relative',
+  },
+  wrapper: {
     position: 'relative',
   },
 });

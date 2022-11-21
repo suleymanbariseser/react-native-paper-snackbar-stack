@@ -1,3 +1,6 @@
+export type { SnackbarProps, SnackbarRefType } from './Snackbar';
+export { default as Snackbar, COLORS } from './Snackbar';
+
 export { default as useSnackbar } from './useSnackbar';
 
 export type {
